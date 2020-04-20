@@ -22,7 +22,7 @@ dms_to_dec <- function(x, type) {
         matrix(., ncol = 3, byrow = T)
     x_tab
     x_tab[,2] <- x_tab[,2]/60
-    x_tab[,3] <- round(x_tab[,3]/3600, 2)
+    x_tab[,3] <- x_tab[,3]/3600
     x_dec <- rowSums(x_tab)
     x_dec * -1
 }
@@ -33,8 +33,25 @@ pts_clean <- pts %>%
            lon_dec = dms_to_dec(Long, type = "Long"))
 
 
-pts_sf <- st_as_sf(pts_clean, coords = c("lon_dec", "lat_dec"), 
-                   crs = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")
+pts_sf <- st_as_sf(pts_clean, coords = c("lon_dec", "lat_dec"), crs = "+init=epsg:4326")
+                   # crs = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")
     
 library(mapview)
 mapview(pts_sf)
+
+
+# get CO points
+pts_CO <- read.csv("Birds_CO_21Apr2020/socolar_points_v1.csv") %>%
+    filter(grepl("SG|PL|PS", name)) %>%
+    mutate(habitat = c("forest", "pasture")[forest+1]) %>%
+    st_as_sf(., coords=c("lon", "lat"), 
+             crs = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs") %>%
+    select(point = name, habitat)
+
+mapview(pts_CO, zcol= "habitat")
+
+pts_P <- pts_sf %>% 
+    select(point = Transect, habitat = Habitat)
+
+pts_all <- rbind(pts_CO, pts_P)
+mapview(pts_all)
