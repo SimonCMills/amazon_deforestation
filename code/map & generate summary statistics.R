@@ -22,7 +22,7 @@ dms_to_dec <- function(x, type) {
         matrix(., ncol = 3, byrow = T)
     x_tab
     x_tab[,2] <- x_tab[,2]/60
-    x_tab[,3] <- x_tab[,3]/3600, 2
+    x_tab[,3] <- round(x_tab[,3]/3600, 2)
     x_dec <- rowSums(x_tab)
     x_dec * -1
 }
@@ -37,3 +37,4 @@ pts_sf <- st_as_sf(pts_clean, coords = c("lon_dec", "lat_dec"),
                    crs = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")
     
 library(mapview)
+mapview(pts_sf)
