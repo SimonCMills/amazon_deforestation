@@ -17,7 +17,6 @@ dms_to_dec <- function(x, type) {
         unlist %>%
         as.numeric %>%
         matrix(., ncol = 3, byrow = T)
-    x_tab
     x_tab[,2] <- x_tab[,2]/60
     x_tab[,3] <- x_tab[,3]/3600
     x_dec <- rowSums(x_tab)
@@ -168,3 +167,8 @@ n_visits %>% filter(n_visit != 4) %>% View
 
 # Write
 saveRDS(df_full, "data/formatted_dataset.rds")
+
+pts_full <- df_full %>% 
+    select(Site, Group, Point, Habitat) %>%
+    unique
+saveRDS(pts_full, "data/formatted_points.rds")
